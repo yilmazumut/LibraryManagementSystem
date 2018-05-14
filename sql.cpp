@@ -1,3 +1,5 @@
+// version 1.0  14/05/2018
+
 #include "sql.h"
 #include <QDebug>
 #include <QDate>
