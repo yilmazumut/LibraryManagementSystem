@@ -1,4 +1,4 @@
-# version 1.0  14/05/2018
+// version 1.0  14/05/2018
 
 #ifndef SQL_H
 #define SQL_H
