@@ -1,4 +1,4 @@
-// version 1.1  15/05/2018
+// version 1.2  15/05/2018
 
 #ifndef SQL_H
 #define SQL_H
@@ -22,7 +22,11 @@ public:
   bool  createTable();
   bool  insertData (QString name, QString author, QString year, QString note);
   bool  deleteData (QString name, QString author, QString year);
+  bool  updateData (QString name, QString author, QString year,
+                    QString nameNew, QString authorNew, QString yearNew, QString noteNew);
   bool  saveChanges();
+  
+  QList<QList<QString> >  getData      (QString key1, QString key2, QString key3);
 
   template <typename T>
   QList<QList<QString> >  singleSearch (QString key);
