@@ -1,9 +1,17 @@
-// version 1.0  14/05/2018
+// version 1.1  15/05/2018
 
 #include "sql.h"
 #include <QDebug>
 #include <QDate>
 #include <QSqlError>
+
+QString const singleSearchParam<name>::text = QString("SELECT * FROM book WHERE name=:key");
+QString const singleSearchParam<author>::text = QString("SELECT * FROM book WHERE author=:key");
+QString const singleSearchParam<year>::text = QString("SELECT * FROM book WHERE year=:key");
+
+QString const doubleSearchParam<name,author>::text = QString("SELECT * FROM book WHERE name=:key1 AND author=:key2");
+QString const doubleSearchParam<name,year>::text = QString("SELECT * FROM book WHERE name=:key1 AND year=:key2");
+QString const doubleSearchParam<author,year>::text = QString("SELECT * FROM book WHERE author=:key1 AND year=:key2");
 
 LibMngSys::LibMngSys(){
   if(db.isValid()){
@@ -30,7 +38,7 @@ LibMngSys::~LibMngSys(){
 }
 
 bool LibMngSys::createTable(){
-  return query.exec("CREATE TABLE book("
+  return query.exec("CREATE TABLE IF NOT EXIST book("
                 "name text,"
                 "author text,"
                 "year text,"
