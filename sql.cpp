@@ -16,7 +16,7 @@ QString const doubleSearchParam<author,year>::text = QString("SELECT * FROM book
 LibMngSys::LibMngSys(){
   if(db.isValid()){
       qDebug() << "Database is valid.";
-      db.setDatabaseName(":memory:");
+      db.setDatabaseName("lms.db");
       if(isOpen()){
           if(!createTable()){
               qDebug() << "Error while creating table.";
