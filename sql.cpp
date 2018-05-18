@@ -70,17 +70,18 @@ QList<QList<QString> > LibMngSys::getAllData(){
       list.append(query.value(2).toString());
       list.append(query.value(3).toString());
       list.append(query.value(4).toString());
+      list.append(query.value(5).toString());
       stringList.append(list);
     }
   return stringList;
 }
 
-QList<QList<QString> > LibMngSys::getData(QString key1, QString key2, QString key3){
+QList<QList<QString> > LibMngSys::getData(QString name, QString author, QString year){
   QList<QList<QString> > stringList;
-  query.prepare("SELECT * FROM book WHERE name=:key1 OR author=:key1 OR year=:key1");
-  query.bindValue(":key1",key1);
-  query.bindValue(":key2",key2);
-  query.bindValue(":key3",key3);
+  query.prepare("SELECT * FROM book WHERE name=:name AND author=:author AND year=:year");
+  query.bindValue(":name",name);
+  query.bindValue(":author",author);
+  query.bindValue(":year",year);
   if (query.exec()){
       while(query.next()){
           QList<QString> list;
@@ -89,6 +90,7 @@ QList<QList<QString> > LibMngSys::getData(QString key1, QString key2, QString ke
           list.append(query.value(2).toString());
           list.append(query.value(3).toString());
           list.append(query.value(4).toString());
+          list.append(query.value(5).toString());
           stringList.append(list);
         }
       return stringList;
