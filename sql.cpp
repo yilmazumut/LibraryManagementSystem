@@ -41,18 +41,20 @@ bool LibMngSys::createTable(){
   return query.exec("CREATE TABLE IF NOT EXISTS book("
                 "name text,"
                 "author text,"
+                "genre text,"
                 "year text,"
                 "note text,"
                 "date text,"
                 "PRIMARY KEY (name,author,year) );");
 }
 
-bool LibMngSys::insertData(QString name, QString author, QString year, QString note){
-  query.prepare("INSERT INTO book(name, author, year, note, date) VALUES (:name, :author, :year, :note, :date)");
-  query.bindValue(":name",name);
-  query.bindValue(":author",author);
-  query.bindValue(":year",year);
-  query.bindValue(":note",note);
+ bool LibMngSys::insertBook(Book* book){
+  query.prepare("INSERT INTO book(name, author, genre, year, note, date) VALUES (:name, :author,:genre, :year, :note, :date)");
+  query.bindValue(":name",book->getName());
+  query.bindValue(":author",book->getAuthor());
+  query.bindValue(":genre",book->getGenre());
+  query.bindValue(":year",book->getYear());
+  query.bindValue(":note",book->getNote());
   QDate date =QDate::currentDate();
   query.bindValue(":date",date);
   return query.exec();
@@ -75,7 +77,7 @@ QList<QList<QString> > LibMngSys::getAllData(){
 
 QList<QList<QString> > LibMngSys::getData(QString key1, QString key2, QString key3){
   QList<QList<QString> > stringList;
-  query.prepare("SELECT * FROM book WHERE name=:key1 AND author=:key2 AND year=:key3");
+  query.prepare("SELECT * FROM book WHERE name=:key1 OR author=:key1 OR year=:key1");
   query.bindValue(":key1",key1);
   query.bindValue(":key2",key2);
   query.bindValue(":key3",key3);
@@ -107,10 +109,11 @@ bool LibMngSys::deleteData(QString name, QString author, QString year){
 }
 
 bool LibMngSys::updateData(QString name, QString author, QString year,
-                           QString nameNew, QString authorNew, QString yearNew, QString noteNew){
-  query.prepare("UPDATE book SET name=:nameNew, author=:authorNew, year=:yearNew, note=:noteNew, date=:date WHERE name=:name AND author=:author AND year=:year");
+                           QString nameNew, QString authorNew, QString genreNew, QString yearNew, QString noteNew){
+  query.prepare("UPDATE book SET name=:nameNew, author=:authorNew, genre=:genreNew, year=:yearNew, note=:noteNew, date=:date WHERE name=:name AND author=:author AND year=:year");
   query.bindValue(":nameNew",nameNew);
   query.bindValue(":authorNew",authorNew);
+  query.bindValue(":genreNew",genreNew);
   query.bindValue(":yearNew",yearNew);
   query.bindValue(":noteNew",noteNew);
   QDate date =QDate::currentDate();
@@ -140,5 +143,6 @@ bool LibMngSys::isOpen(){
       query = QSqlQuery(db);
       return true;
     }
+
 
 }
