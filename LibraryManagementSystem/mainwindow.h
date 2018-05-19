@@ -44,7 +44,7 @@ private slots:
 
     void on_refreshDatabase_clicked();
 
-    void on_booksView_cellClicked(int row, int column);
+    void on_booksView_cellClicked(int row);
 
 private:
     Ui::MainWindow *ui;

@@ -152,7 +152,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QTableWidget" name="booksView"/>
+       <widget class="QTableWidget" name="booksView">
+        <property name="editTriggers">
+         <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="ListButtonLayout"/>
@@ -193,7 +200,7 @@
       <item>
        <widget class="QTextEdit" name="notesTextEdit">
         <property name="readOnly">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -207,7 +214,7 @@
      <x>0</x>
      <y>0</y>
      <width>850</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">

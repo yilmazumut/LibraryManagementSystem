@@ -15,6 +15,7 @@ class addBook : public QDialog
 
 public:
     explicit addBook(QWidget *parent = 0);
+    void updateBook();
     ~addBook();
 
 private slots:
@@ -23,6 +24,7 @@ private slots:
 
 private:
     Ui::addBook *ui;
+    bool status;
 };
 
 #endif // ADDBOOK_H

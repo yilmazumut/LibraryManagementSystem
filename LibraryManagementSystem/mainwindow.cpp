@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
  */
 void MainWindow::RefreshDB(){
 
-    QList<QTableWidgetItem*> widget_item_collector;
+    //QList<QTableWidgetItem*> widget_item_collector;
     LibMngSys* mngSys = new LibMngSys();
 
     QList<QList<QString> > bookList =  mngSys->getAllData();
@@ -47,6 +47,7 @@ void MainWindow::RefreshDB(){
     int index=0;
 
     for(QList<QList<QString> >::iterator itr = bookList.begin(); itr != bookList.end();itr++) {
+        //qDebug() << index << itr->value(0);
 
         QTableWidgetItem *name = new QTableWidgetItem(itr->value(0));
         QTableWidgetItem *author = new QTableWidgetItem(itr->value(1));
@@ -56,7 +57,7 @@ void MainWindow::RefreshDB(){
         QTableWidgetItem *date = new QTableWidgetItem(itr->value(5));
 
 
-        notes.push_back(note->text());
+        //notes.push_back(note->text());
 
         ui->booksView->setItem(index,0,name);
         ui->booksView->setItem(index,1,author);
@@ -103,11 +104,15 @@ void MainWindow::on_searchButton_clicked()
         QTableWidgetItem *item2 = new QTableWidgetItem(itr->value(1));
         QTableWidgetItem *item3 = new QTableWidgetItem(itr->value(2));
         QTableWidgetItem *item4 = new QTableWidgetItem(itr->value(3));
+        QTableWidgetItem *item5 = new QTableWidgetItem(itr->value(4));
+        QTableWidgetItem *item6 = new QTableWidgetItem(itr->value(5));
 
         ui->booksView->setItem(index,0,item1);
         ui->booksView->setItem(index,1,item2);
         ui->booksView->setItem(index,2,item3);
         ui->booksView->setItem(index,3,item4);
+        ui->booksView->setItem(index,4,item5);
+        ui->booksView->setItem(index,5,item6);
 
 
         index++;
@@ -122,8 +127,11 @@ void MainWindow::on_searchButton_clicked()
 void MainWindow::on_actionaddbook_triggered()
 {
     addBook addBook;
-    addBook.setModal(true);
+    //addBook.setModal(true);
     addBook.exec();
+    RefreshDB();
+    //qDebug() << "hello";
+    //addBook.close();
 }
 
 /**
@@ -133,8 +141,7 @@ void MainWindow::on_actionaddbook_triggered()
  */
 void MainWindow::on_booksView_cellDoubleClicked(int row, int column)
 {
-
-    qDebug() << row << " " << column;
+    //qDebug() << row << " " << column;
 
     std::vector<QString> attribute_collector;
     QString attribute_key;
@@ -149,13 +156,13 @@ void MainWindow::on_booksView_cellDoubleClicked(int row, int column)
 
 
     for( QMap<QString,QString>::iterator itr = selected_book_map.begin(); itr != selected_book_map.end();itr++) {
-
         attribute_key = itr.key();
     }
 
     for(int col = 0; col < ui->booksView->columnCount(); col++) {
 
         QTableWidgetItem *current_item =  ui->booksView->item(row,col);
+        //qDebug() << "current_item->text()" << current_item->text() ;
         attribute_collector.push_back(current_item->text());
 
     }
@@ -167,15 +174,44 @@ void MainWindow::on_booksView_cellDoubleClicked(int row, int column)
 
     for( QMap<QString,std::vector<QString> >::iterator itr = current_book_details.begin(); itr != current_book_details.end(); itr++) {
 
-        qDebug()<<itr.key();
+        //qDebug()<<itr.key();
         std::vector<QString> current_info_collector = itr.value();
-        book_instance = new Book(current_info_collector[0],current_info_collector[1],current_info_collector[2],current_info_collector[3],"");
+        book_instance = new Book(current_info_collector[0],current_info_collector[1],current_info_collector[2],current_info_collector[3],current_info_collector[4]);
 
     }
 
 
     Book::instance = book_instance;
     current_row = row;
+    addBook ab;
+    ab.updateBook();
+    ab.exec();
+    qDebug() << "continue";
+    LibMngSys *mng_sys = new LibMngSys();
+    mng_sys->saveChanges();
+    RefreshDB();
+    qDebug()<< "edit success" << " " << Book::instance->getName();
+
+    /*std::vector<QTableWidgetItem*> item_collector;
+
+    for(int i = 0; i < ui->booksView->columnCount(); i++) {
+
+        QTableWidgetItem* current_item = ui->booksView->item(current_row,i);
+        item_collector.push_back(current_item);
+    }
+
+
+    Book *curr_book_instance = new Book(item_collector[0]->text(),item_collector[1]->text(),item_collector[2]->text(),item_collector[3]->text(),item_collector[4]->text());
+    LibMngSys *mng_sys = new LibMngSys();
+    bool edit_success = mng_sys->updateData(Book::instance->getName(),Book::instance->getAuthor(),Book::instance->getYear(),curr_book_instance->getName(),curr_book_instance->getAuthor(),curr_book_instance->getGenre(),curr_book_instance->getYear(),curr_book_instance->getNote());
+
+    if(edit_success) {
+        mng_sys->saveChanges();
+        RefreshDB();
+        qDebug()<< "edit success" << " " << curr_book_instance->getName();
+
+
+    }*/
 }
 
 
@@ -185,26 +221,10 @@ void MainWindow::on_booksView_cellDoubleClicked(int row, int column)
 void MainWindow::on_saveButton_clicked()
 {
 
-    qDebug()<<Book::instance->getName() << " " << current_row;
-    std::vector<QTableWidgetItem*> item_collector;
-
-    for(int i = 0; i < ui->booksView->columnCount(); i++) {
-
-        QTableWidgetItem* current_item = ui->booksView->item(current_row,i);
-        item_collector.push_back(current_item);
-    }
-
-
-    Book *curr_book_instance = new Book(item_collector[0]->text(),item_collector[1]->text(),item_collector[2]->text(),item_collector[3]->text(),"");
-    LibMngSys *mng_sys = new LibMngSys();
-    bool edit_success = mng_sys->updateData(Book::instance->getName(),Book::instance->getAuthor(),Book::instance->getYear(),curr_book_instance->getName(),curr_book_instance->getAuthor(),curr_book_instance->getGenre(),curr_book_instance->getYear(),"");
-
-    if(edit_success) {
-        mng_sys->saveChanges();
-        qDebug()<< "edit success" << " " << curr_book_instance->getName();
-
-
-    }
+  LibMngSys *mng_sys = new LibMngSys();
+  mng_sys->saveChanges();
+  RefreshDB();
+  //qDebug() << "Saved";
 
 }
 
@@ -223,11 +243,11 @@ void MainWindow::on_deleteButton_clicked()
         item_collector.push_back(current_item);
     }
 
-    notes.erase(notes.begin(),notes.begin()+ui->booksView->currentRow());
+    //notes.erase(notes.begin(),notes.begin()+ui->booksView->currentRow());
 
-    Book *curr_book_instance = new Book(item_collector[0]->text(),item_collector[1]->text(),item_collector[2]->text(),item_collector[3]->text(),"");
+    Book *curr_book_instance = new Book(item_collector[0]->text(),item_collector[1]->text(),item_collector[2]->text(),item_collector[3]->text(),item_collector[4]->text());
     mng_sys->deleteData(curr_book_instance->getName(),curr_book_instance->getAuthor(),curr_book_instance->getYear());
-
+    qDebug() << "hello";
     RefreshDB();
 }
 
@@ -244,11 +264,13 @@ void MainWindow::on_refreshDatabase_clicked()
  * @param Current Row
  * @param Current Column
  */
-void MainWindow::on_booksView_cellClicked(int row, int column)
+void MainWindow::on_booksView_cellClicked(int row)
 {
+    QTableWidgetItem *current_item =  ui->booksView->item(row,4);
+    ui->notesTextEdit->setText(current_item->text());
 
-    std::vector<QString>::iterator itr = notes.begin();
-    ui->notesTextEdit->setText(notes.at(row));
+    //std::vector<QString>::iterator itr = notes.begin();
+    //ui->notesTextEdit->setText(notes.at(row));
 
 }
 
